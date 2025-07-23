@@ -1,1 +1,62 @@
-<p>contribution works!</p>
+<div class="text-center border-b border-gray-200 py-4 relative">
+  <h2 class="text-xl font-semibold text-cyan-700">
+    Choose a contribution amount
+  </h2>
+  <div class="absolute right-4 top-4 text-cyan-700 text-lg">₹</div>
+</div>
+
+<div class="flex flex-col items-center mt-6 px-4">
+  <p class="text-gray-600 text-sm mb-4">
+    Most contributors contribute approx
+    <span class="font-semibold text-cyan-700">&#8377;2500</span> to this
+    fundraiser.
+  </p>
+
+  <div class="flex flex-wrap gap-4 justify-center mb-6">
+    <app-amount-selection
+      *ngFor="let amt of fixedAmounts"
+      [amount]="amt"
+      [selected]="selectedAmount === amt"
+      (amountSelected)="onAmountSelected($event)"
+    ></app-amount-selection>
+  </div>
+
+  <app-amount-selection
+    [amount]="null"
+    [selected]="otherOptionSelected"
+    (amountSelected)="onAmountSelected($event)"
+  ></app-amount-selection>
+
+  <div *ngIf="otherOptionSelected" class="mt-1 w-full max-w-xs mx-auto">
+    <input
+      type="number"
+      class="w-full rounded-md border border-gray-300 px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-400"
+      placeholder="Enter custom amount"
+      (change)="onCustomAmountChange($event.target.value)"
+    />
+  </div>
+
+  <div
+    class="bg-blue-50 border border-blue-100 rounded-md p-4 w-full max-w-lg text-sm text-gray-700"
+  >
+    <p class="mb-2">
+      Ketto is charging 0% platform fee* for this fundraiser, relying solely on
+      the generosity of contributors like you.
+    </p>
+    <div class="flex items-center gap-2">
+      <span>Support us by adding a tip of:</span>
+      <select
+        [(ngModel)]="selectedTip"
+        (change)="calculateTotalAmount()"
+        class="border border-gray-300 rounded px-2 py-1 text-sm"
+      >
+        <option *ngFor="let tip of tipOptions" [value]="tip.value">
+          {{ tip.label }}
+        </option>
+      </select>
+    </div>
+    <p class="mt-2 text-right font-semibold">
+      Total Amount: ₹{{ totalAmount }}
+    </p>
+  </div>
+</div>
