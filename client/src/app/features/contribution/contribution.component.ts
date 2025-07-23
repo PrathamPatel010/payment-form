@@ -2,11 +2,23 @@ import { CommonModule } from '@angular/common';
 import { Component } from '@angular/core';
 3;
 import { AmountSelectionComponent } from './components/amount-selection/amount-selection.component';
-import { FormsModule } from '@angular/forms';
+import {
+  FormBuilder,
+  FormGroup,
+  FormsModule,
+  ReactiveFormsModule,
+  Validators,
+} from '@angular/forms';
+import { OrderService } from './services/order.service';
 
 @Component({
   selector: 'app-contribution',
-  imports: [CommonModule, AmountSelectionComponent, FormsModule],
+  imports: [
+    CommonModule,
+    AmountSelectionComponent,
+    FormsModule,
+    ReactiveFormsModule,
+  ],
   templateUrl: './contribution.component.html',
   styleUrl: './contribution.component.scss',
 })
@@ -22,6 +34,25 @@ export class ContributionComponent {
   selectedAmount: number | null = 0;
   selectedTip = 18;
   totalAmount = 0;
+  userInfoForm: FormGroup;
+
+  constructor(private _fb: FormBuilder, private _orderService: OrderService) {}
+
+  ngOnInit() {
+    this.userInfoForm = this._fb.group({
+      name: [null, [Validators.required]],
+      email: [null, [Validators.email]],
+      phone: [
+        null,
+        [
+          Validators.required,
+          Validators.minLength(10),
+          Validators.maxLength(10),
+        ],
+      ],
+      address: [null, Validators.required],
+    });
+  }
 
   onAmountSelected(amount: number) {
     if (amount < 0) {
@@ -66,5 +97,23 @@ export class ContributionComponent {
     const tip = (this.selectedAmount * this.selectedTip * 0.01).toFixed();
     const total = this.selectedAmount + Number.parseInt(tip);
     this.totalAmount = total;
+  }
+
+  formSubmitted() {
+    console.log(this.userInfoForm.value);
+    const userInfo = this.userInfoForm.value;
+    const reqPayload = {
+      ...userInfo,
+      amount: this.selectedAmount,
+      tip: this.totalAmount - this.selectedAmount,
+      anonymous: false,
+    };
+    this.createOrder(reqPayload);
+  }
+
+  async createOrder(payload) {
+    this._orderService.createOrder(payload).subscribe((res) => {
+      console.log(res);
+    });
   }
 }
