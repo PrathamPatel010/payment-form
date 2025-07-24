@@ -6,6 +6,7 @@ var builder = WebApplication.CreateBuilder(args);
 builder.Services.AddNLogLogger();
 builder.Services.AddControllers();
 builder.Services.AddHttpClient();
+builder.Services.ConfigureApiBehaviorForValidationError();
 builder.Services.AddCors(options =>
 {
     options.AddPolicy("AllowSpecifiedOrigin", policy =>

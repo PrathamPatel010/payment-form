@@ -3,6 +3,13 @@
 {
   "compileOnSave": false,
   "compilerOptions": {
+    "baseUrl": "src",
+    "paths": {
+      "@app/*": ["app/*"],
+      "@features/*": ["app/features/*"],
+      "@models/*": ["app/models/*"],
+      "@pages/*": ["app/pages/*"]
+    },
     "outDir": "./dist/out-tsc",
     "strict": false,
     "noImplicitOverride": true,
