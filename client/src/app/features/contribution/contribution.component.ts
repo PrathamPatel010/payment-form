@@ -139,6 +139,7 @@ export class ContributionComponent {
   }
 
   proceedPayment(res) {
+    console.log(this.userInfoForm.value.phone);
     const options = {
       key: res.key,
       amount: res.amount,
@@ -146,7 +147,7 @@ export class ContributionComponent {
       name: res.name,
       order_id: res.orderId,
       prefill: {
-        contact: this.userInfoForm.value.phone,
+        contact: '91' + this.userInfoForm.value.phone, // we are assuming indian phone numbers only
         ...(this.userInfoForm.value.anonymous
           ? {}
           : {
