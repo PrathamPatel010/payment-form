@@ -10,4 +10,5 @@ export const routes: Routes = [
     component: PaymentSuccessComponent,
     canActivate: [paymentSuccessGuard],
   },
+  { path: '**', redirectTo: '/' },
 ];
