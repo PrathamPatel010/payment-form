@@ -25,6 +25,7 @@ declare var Razorpay: any;
   styleUrl: './contribution.component.scss',
 })
 export class ContributionComponent {
+  requestSent = false;
   fixedAmounts = [1000, 2500, 4000];
   tipOptions = [];
   otherOptionSelected = false;
@@ -125,12 +126,14 @@ export class ContributionComponent {
   }
 
   async createOrder(payload: CreateOrderReq) {
+    this.requestSent = true;
     this._orderService.createOrder(payload).subscribe({
       next: (res) => {
         this.proceedPayment(res);
       },
       error: (err) => {
         alert(err.error.messages.join('\n'));
+        this.requestSent = false;
       },
     });
   }
@@ -152,26 +155,36 @@ export class ContributionComponent {
             }),
       },
       handler: (response: any) => {
-        // Sending to backend for verification
         this._orderService
           .verifyPayment({
             razorpay_payment_id: response.razorpay_payment_id,
             razorpay_order_id: response.razorpay_order_id,
             razorpay_signature: response.razorpay_signature,
           })
-          .subscribe(() => {
-            this.router.navigate(['/payment-success'], {
-              state: {
-                name: !this.isAnonymous ? this.userInfoForm.value.name : '',
-                amount: this.totalAmount,
-                paymentId: response.razorpay_payment_id,
-                orderId: response.razorpay_order_id,
-              },
-            });
+          .subscribe({
+            next: () => {
+              this.requestSent = false;
+              this.router.navigate(['/payment-success'], {
+                state: {
+                  name: !this.isAnonymous ? this.userInfoForm.value.name : '',
+                  amount: this.totalAmount,
+                  paymentId: response.razorpay_payment_id,
+                  orderId: response.razorpay_order_id,
+                },
+              });
+            },
+            error: () => {
+              this.requestSent = false;
+              alert('Payment verification failed.');
+            },
           });
       },
-      theme: {
-        color: '#3399cc',
+      theme: { color: '#3399cc' },
+      modal: {
+        // when user closes the razor pay modal
+        ondismiss: () => {
+          this.requestSent = false;
+        },
       },
     };
 
