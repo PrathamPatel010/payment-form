@@ -100,18 +100,6 @@ export const environment = {
 
 ---
 
-## 🔐 Sample .env for Deployment
-
-### For Backend (Render)
-
-```env
-Secrets__ApiKeyId=your_api_key_id
-Secrets__ApiKeySecret=your_api_key_secret
-Cors__AllowedOrigin=https://your-frontend-url.vercel.app
-```
-
----
-
 ## 📦 API Endpoints
 
 ### ✅ `POST /create-order`
