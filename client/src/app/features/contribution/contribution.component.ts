@@ -132,7 +132,7 @@ export class ContributionComponent {
         this.proceedPayment(res);
       },
       error: (err) => {
-        alert(err.error.messages.join('\n'));
+        alert(err?.error?.messages?.join('\n') ?? 'Something went wrong');
         this.requestSent = false;
       },
     });
